@@ -23,7 +23,7 @@ message CheckResponse{
 
 message CreateUserInfo{
   string nickname = 1;
-  string phone = 2;
+  string mobile = 2;
   string password = 3;
 }
 
@@ -48,7 +48,7 @@ message IdRequest{
 message UserInfoResponse{
   int32 id = 1;
   string password = 2;
-  string phone = 3;
+  string mobile = 3;
   string nickname = 4;
   int32 role = 5;
 }
