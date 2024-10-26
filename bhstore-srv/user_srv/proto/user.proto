@@ -30,6 +30,7 @@ message CreateUserInfo{
 message PasswordCheckInfo{
   int32 id = 1;
   string password =2;
+  string enPassword=3;
 }
 
 message UpdateUserInfo{

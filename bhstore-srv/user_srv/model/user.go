@@ -16,7 +16,7 @@ type BaseModel struct {
 type User struct {
 	BaseModel
 	Mobile   string `gorm:"index:idx_mobile;unique;not null;type:varchar(11)"`
-	Password string `gorm:"type:varchar(20);not null"`
+	Password string `gorm:"type:varchar(100);not null"`
 	Nickname string `gorm:"type:varchar(20);not null"`
 	Role     int32  `gorm:"default:1"`
 }
