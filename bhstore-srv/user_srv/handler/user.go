@@ -6,9 +6,10 @@ import (
 	"bhstore/bhstore-srv/user_srv/proto"
 	"context"
 	"crypto/sha512"
-	"errors"
 	"fmt"
 	"github.com/anaskhan96/go-password-encoder"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -44,7 +45,7 @@ func (s *UserService) GetUserList(ctx context.Context, req *proto.PageInfo) (*pr
 	var users []model.User
 	result := global.DB.Find(&users)
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, status.Error(codes.NotFound, result.Error.Error())
 	}
 	resp := &proto.UserListResponse{}
 	resp.Total = int32(result.RowsAffected)
@@ -59,7 +60,7 @@ func (s *UserService) GetUserByMobile(ctx context.Context, req *proto.MobileRequ
 	var user model.User
 	result := global.DB.Where(&model.User{Mobile: req.Mobile}).First(&user)
 	if result.RowsAffected == 0 {
-		return nil, errors.New("not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 	response := proto.UserInfoResponse{
 		Id:       user.ID,
@@ -74,7 +75,7 @@ func (s *UserService) GetUserById(ctx context.Context, req *proto.IdRequest) (*p
 	var user model.User
 	result := global.DB.First(&user, req.Id)
 	if result.RowsAffected == 0 {
-		return nil, errors.New("not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 	response := proto.UserInfoResponse{
 		Id:       user.ID,
@@ -89,7 +90,7 @@ func (s *UserService) CreateUser(ctx context.Context, req *proto.CreateUserInfo)
 	var user model.User
 	result := global.DB.Where("mobile = ?", req.Mobile).First(&user)
 	if result.RowsAffected != 0 {
-		return nil, errors.New("already existed")
+		return nil, status.Error(codes.AlreadyExists, "already exists")
 	}
 	option := password.Options{SaltLen: 16, Iterations: 100, KeyLen: 32, HashFunction: sha512.New}
 	salt, enPasswd := password.Encode(req.Password, &option)
@@ -113,7 +114,7 @@ func (s *UserService) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo)
 	var user model.User
 	result := global.DB.First(&user, req.Id)
 	if result.RowsAffected == 0 {
-		return nil, errors.New("not found")
+		return nil, status.Error(codes.NotFound, "not found")
 	}
 	user = model.User{
 		Nickname: req.Nickname,

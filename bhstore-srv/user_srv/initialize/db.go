@@ -3,6 +3,7 @@ package initialize
 import (
 	"bhstore/bhstore-srv/user_srv/global"
 	"fmt"
+	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -34,6 +35,7 @@ func InitDB() {
 		},
 	})
 	if err != nil {
+		zap.S().Infof("database connect err:%s", err.Error())
 		panic(err)
 	}
 	fmt.Println("InitDB success!")

@@ -4,6 +4,7 @@ import (
 	"bhstore/bhstore-srv/user_srv/global"
 	"fmt"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
 func InitConfig() {
@@ -12,12 +13,12 @@ func InitConfig() {
 	v.SetConfigFile(path)
 
 	if err := v.ReadInConfig(); err != nil {
-		fmt.Println("读取文件失败")
+		zap.S().Infof("InitConfig Read In Config Failed, %s", err.Error())
 		panic(err)
 	}
 
 	if err := v.Unmarshal(&global.Config); err != nil {
-		fmt.Println("反序列化失败")
+		zap.S().Infof("InitConfig Unmarshal Failed, %s", err.Error())
 		panic(err)
 	}
 	fmt.Println("InitConfig success!")

@@ -15,6 +15,7 @@ func main() {
 	IP := flag.String("ip", "127.0.0.1", "server ip")
 	Port := flag.Int("port", 8888, "server port")
 
+	initialize.InitLogger()
 	initialize.InitConfig()
 	initialize.InitDB()
 
