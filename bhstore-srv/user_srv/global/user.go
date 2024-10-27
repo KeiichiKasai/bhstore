@@ -1,7 +1,11 @@
 package global
 
-import "gorm.io/gorm"
+import (
+	"bhstore/bhstore-srv/user_srv/config"
+	"gorm.io/gorm"
+)
 
 var (
-	DB *gorm.DB
+	DB     *gorm.DB
+	Config config.Config
 )
