@@ -1,7 +1,7 @@
 syntax = "proto3";
 package user_srv;
 option go_package =".;proto";
-
+// 生成proto文件指令：protoc -I . user.proto --go_out=plugins=grpc:.
 // 用户服务
 service User{
   rpc GetUserList(PageInfo) returns (UserListResponse);

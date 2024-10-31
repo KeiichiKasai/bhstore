@@ -6,8 +6,8 @@ import (
 	"bhstore/bhstore-srv/user_srv/proto"
 	"flag"
 	"fmt"
+	"go.uber.org/zap"
 	"google.golang.org/grpc"
-	"log"
 	"net"
 )
 
@@ -25,7 +25,7 @@ func main() {
 	proto.RegisterUserServer(server, &handler.UserService{})
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", *IP, *Port))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		zap.S().Errorf("failed to listen: %v", err)
 	}
 	err = server.Serve(lis)
 	if err != nil {
