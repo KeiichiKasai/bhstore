@@ -3,6 +3,7 @@ package api
 import (
 	"bhstore/bhstore-api/user_api/forms"
 	"bhstore/bhstore-api/user_api/global"
+	"bhstore/bhstore-api/user_api/middleware"
 	"bhstore/bhstore-api/user_api/proto"
 	"bhstore/bhstore-api/user_api/utils"
 	"github.com/gin-gonic/gin"
@@ -57,9 +58,16 @@ func Login(c *gin.Context) {
 			"msg":  "密码错误",
 		})
 	}
+	token, err := middleware.GenToken(resp.Id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": 2,
+			"msg":  "生成token失败",
+		})
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": 1,
-		"msg":  resp2,
+		"msg":  token,
 	})
 }
 func GetUserList(c *gin.Context) {

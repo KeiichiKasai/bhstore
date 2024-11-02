@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"bhstore/bhstore-api/user_api/global"
+	"fmt"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/zh"
@@ -32,4 +33,5 @@ func InitValidatorTrans(local string) {
 			_ = enTranslations.RegisterDefaultTranslations(v, global.Trans)
 		}
 	}
+	fmt.Println("InitValidatorTrans success!")
 }

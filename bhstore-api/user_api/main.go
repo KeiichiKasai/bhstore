@@ -10,6 +10,7 @@ func main() {
 	initialize.InitLogger()
 	initialize.InitConfig()
 	initialize.InitConn()
+	initialize.InitValidatorTrans("zh")
 	e := initialize.InitRouters()
 	e.Run(fmt.Sprintf(":%s", global.SeverConfig.Port))
 }

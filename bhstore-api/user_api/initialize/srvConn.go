@@ -18,4 +18,5 @@ func InitConn() {
 		panic(err)
 	}
 	global.UserClient = proto.NewUserClient(conn)
+	fmt.Println("InitConn success!")
 }
