@@ -18,7 +18,16 @@ func Register(c *gin.Context) {
 		utils.HandleValidator(err, c)
 		return
 	}
-	resp, err := global.UserClient.CreateUser(c, &proto.CreateUserInfo{
+
+	_, err = global.UserClient.GetUserByMobile(c, &proto.MobileRequest{Mobile: registerInfo.Mobile})
+	if err == nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 1,
+			"msg":  "用户已存在",
+		})
+	}
+
+	resp1, err := global.UserClient.CreateUser(c, &proto.CreateUserInfo{
 		Nickname: registerInfo.Nickname,
 		Mobile:   registerInfo.Mobile,
 		Password: registerInfo.PassWord,
@@ -29,21 +38,24 @@ func Register(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": 1,
-		"msg":  resp,
+		"msg":  resp1,
 	})
 }
 func Login(c *gin.Context) {
 	loginInfo := &forms.LoginForm{}
+	//表单验证
 	err := c.ShouldBind(loginInfo)
 	if err != nil {
 		utils.HandleValidator(err, c)
 		return
 	}
+	//查找是否存在用户
 	resp, err := global.UserClient.GetUserByMobile(c, &proto.MobileRequest{Mobile: loginInfo.Mobile})
 	if err != nil {
 		utils.HandleGrpcErrorToHttp(err, c)
 		return
 	}
+	//验证密码
 	resp2, err := global.UserClient.CheckPassWord(c, &proto.PasswordCheckInfo{
 		Password:   loginInfo.PassWord,
 		EnPassword: resp.Password,
@@ -57,13 +69,25 @@ func Login(c *gin.Context) {
 			"code": 1,
 			"msg":  "密码错误",
 		})
+		return
 	}
+	//校对验证码
+	ok := store.Verify(loginInfo.CaptchaId, loginInfo.Captcha, true)
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 1,
+			"msg":  "验证码错误",
+		})
+		return
+	}
+	//分发token
 	token, err := middleware.GenToken(resp.Id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"code": 2,
 			"msg":  "生成token失败",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": 1,

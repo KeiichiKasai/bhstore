@@ -13,6 +13,7 @@ func InitRouters() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.CORS())
 	APIRouter := r.Group("/bh_store")
+	router.InitBaseRouter(APIRouter)
 	router.InitUserRouter(APIRouter)
 
 	return r
